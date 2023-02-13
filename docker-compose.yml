@@ -1,0 +1,15 @@
+version: "3"
+services:
+  docker-py:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    volumes:
+      - ./python/root_jupyter:/rrot/.jupyter
+      - ./workspace:/home/jovyan/work
+    expose:
+      - 8888
+    ports:
+      - 8888:8888
+    restart: always
+    command: start.sh jupyter lab --NotebookApp.token=''
