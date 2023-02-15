@@ -14,16 +14,13 @@ class Ferro(G.Dense):
 class SK(G.Dense):
     def __init__(self, N, mu=0, sig=1):
         super().__init__(N)
-        for i in range(N):
-            for j in range(i):
-                self[i, j] = sig * np.random.normal() / N + mu
-            self[i] = sig * np.random.normal() / N + mu
+        self[:, :] = np.random.normal(loc=mu, scale=sig/np.sqrt(N), size=(N, N))
 
 
 class Hopfield(G.Dense):
     def __init__(self, N, p):
         super().__init__(N)
-        Xi = np.sign(np.random(N, p) - 0.5)
+        Xi = np.sign(np.random.rand(N, p) - 0.5)
         self.Xi = Xi
         J = Xi @ Xi.T / N
         for i in range(N):
@@ -41,13 +38,14 @@ class Hopfield(G.Dense):
 class CDMA(G.Dense):
     def __init__(self, N, K, noise):
         super().__init__(N)
-        Xi = np.sign(np.random(N, K) - 0.5)
+        Xi = np.sign(np.random.rand(K, N) - 0.5)
         self.Xi = Xi
-        J = Xi @ Xi.T / N
-        x = np.sign(np.random(N,) - 0.5);
+        J = Xi.T @ Xi / N
+        x = np.sign(np.random.rand(N,) - 0.5);
         self.x = x
-        channel_noise = noise * np.random.randn(N, )
+        channel_noise = noise * np.random.randn(K, )
         y = Xi @ x / np.sqrt(N) + channel_noise
+        print(y.shape)
         h = Xi.T @ y / np.sqrt(N)
 
         for i in range(N):
